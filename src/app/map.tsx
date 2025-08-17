@@ -34,8 +34,13 @@ export default function Map() {
                 }
             );
 
+
             if (map.current) {
-                loadGPXRoute(map.current, 'day-1.gpx', 'day-1');
+                loadGPXRoute(map.current, 'day-1.gpx', 'day-1', '#ff3300');
+                loadGPXRoute(map.current, 'day-2.gpx', 'day-2', '#00ffcc');
+                loadGPXRoute(map.current, 'day-3.gpx', 'day-3', '#8b3a62');
+                loadGPXRoute(map.current, 'day-4.gpx', 'day-4', '#ccff00');
+                loadGPXRoute(map.current, 'day-5.gpx', 'day-5', '#0099aa');
             }
         });
     }, []);

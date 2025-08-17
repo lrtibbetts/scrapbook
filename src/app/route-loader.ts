@@ -1,6 +1,6 @@
 "use client"
 
-export async function loadGPXRoute(map: mapboxgl.Map | null, gpxFilePath: string, routeId: string = 'route' ) {
+export async function loadGPXRoute(map: mapboxgl.Map | null, gpxFilePath: string, routeId: string = 'route',  color: string) {
     if (!map) return;
 
     try {
@@ -40,7 +40,7 @@ export async function loadGPXRoute(map: mapboxgl.Map | null, gpxFilePath: string
                     'line-cap': 'round'
                 },
                 'paint': {
-                    'line-color': '#ff6b35',
+                    'line-color': color,
                     'line-width': 3,
                     'line-opacity': 0.9
                 }
@@ -75,7 +75,7 @@ export async function loadGPXRoute(map: mapboxgl.Map | null, gpxFilePath: string
                 'source': `${routeId}-points`,
                 'paint': {
                     'circle-radius': 4,
-                    'circle-color': '#ff6b35'
+                    'circle-color': color
                 }
             });
         }
