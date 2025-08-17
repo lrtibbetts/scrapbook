@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+import { loadGPXRoute } from './route-loader';
 
 export default function Map() {
     const mapContainer = useRef(null);
@@ -32,6 +33,10 @@ export default function Map() {
                     font: 'Roboto Mono'
                 }
             );
+
+            if (map.current) {
+                loadGPXRoute(map.current, 'day-1.gpx', 'day-1');
+            }
         });
     }, []);
 
