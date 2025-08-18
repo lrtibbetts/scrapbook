@@ -75,7 +75,7 @@ export async function loadGPXRoute(map: mapboxgl.Map | null, gpxFilePath: string
                 'source': `${routeId}-points`,
                 'paint': {
                     'circle-radius': 4,
-                    'circle-color': color
+                    'circle-color': '#ff6b35'
                 }
             });
         }
