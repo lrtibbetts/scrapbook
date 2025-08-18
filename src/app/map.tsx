@@ -16,7 +16,7 @@ export default function Map() {
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/standard-satellite',
-            center: [12.0057, 46.5180], // Passo Falzarego, Italy
+            center: [12.0406, 46.4996], // Rifugio Averau
             zoom: 12
         });
 
