@@ -7,12 +7,13 @@ export interface PhotoLocation {
     filename: string;
     url: string;
     timestamp?: Date;
+    description: string;
 }
 
 export interface PhotoFeature extends GeoJSON.Feature {
     geometry: GeoJSON.Point;
     properties: {
-        filename: string;
+        description: string;
         url: string;
         timestamp?: string;
         index: number;
@@ -22,11 +23,10 @@ export interface PhotoFeature extends GeoJSON.Feature {
 export async function loadPhotoLocations(): Promise<PhotoLocation[]> {
     try {
         const response = await fetch('/photos/manifest.json');
-        const photoFiles: string[] = await response.json();
-        
+        const manifest: Record<string, string> = await response.json();
         const photoLocations: PhotoLocation[] = [];
         
-        for (const filename of photoFiles) {
+        for (const [filename, description] of Object.entries(manifest)) {
             try {
                 const photoResponse = await fetch(`/photos/${filename}`);
                 const photoBlob = await photoResponse.blob();
@@ -40,7 +40,8 @@ export async function loadPhotoLocations(): Promise<PhotoLocation[]> {
                         lng: exifData.longitude,
                         filename: filename,
                         url: `/photos/${filename}`,
-                        timestamp: exifData.DateTimeOriginal
+                        timestamp: exifData.DateTimeOriginal,
+                        description: description
                     };
                     photoLocations.push(photoLocation);
                     console.log(`Found GPS for ${filename}: ${exifData.latitude}, ${exifData.longitude}`);
@@ -90,7 +91,7 @@ export function addPhotoPopupHandlers(map: mapboxgl.Map) {
         if (!features || features.length === 0) return;
 
         const feature = features[0];
-        const { filename, url, timestamp } = feature.properties!;
+        const { description, url, timestamp } = feature.properties!;
 
         if (feature.geometry.type !== 'Point') {
             console.error('Expected Point geometry for photo marker');
@@ -98,16 +99,16 @@ export function addPhotoPopupHandlers(map: mapboxgl.Map) {
         }
         const [lng, lat] = (feature.geometry).coordinates;
 
+        // TODO font color to match
         const popupContent = `
-            <div style="max-width: 300px;">
-                <img src="${url}" alt="${filename}" style="width: 100%; height: auto; border-radius: 4px; margin-bottom: 8px;"/>
-                <div style="font-family: 'Roboto Mono', monospace; font-size: 12px;">
-                    <strong>${filename}</strong><br/>
-                    ${lat.toFixed(6)}, ${lng.toFixed(6)}<br/>
-                    ${timestamp ? new Date(timestamp).toLocaleDateString() : ''}
-                </div>
-            </div>
+        <div style="max-width: 300px; font-family: 'Roboto Mono', monospace; font-size: 12px; color: #8b3a62;">
+            <img src="${url}" alt="${description}" style="width: 100%; height: auto; border-radius: 4px; margin-bottom: 8px;"/>
+            <strong>${description}</strong><br/>
+            ${lat.toFixed(6)}, ${lng.toFixed(6)}<br/>
+            ${timestamp ? new Date(timestamp).toLocaleDateString() : ''}
+        </div>
         `;
+
 
         new mapboxgl.Popup({ offset: 25 })
             .setLngLat([lng, lat])
@@ -135,7 +136,7 @@ function createPhotoGeoJSON(photoLocations: PhotoLocation[]): GeoJSON.FeatureCol
                 coordinates: [photo.lng, photo.lat]
             },
             properties: {
-                filename: photo.filename,
+                description: photo.description,
                 url: photo.url,
                 timestamp: photo.timestamp?.toISOString(),
                 index
