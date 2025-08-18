@@ -39,7 +39,8 @@ export default function Map() {
                     showLandBoundaries: false,
                     showAdminBoundaries: false,
                     font: 'Roboto Mono',
-                    poiDensity: 'low'
+                    poiDensity: 'low',
+                    showPointOfInterestLabels: false // TODO hide only some
                 }
             );
             
